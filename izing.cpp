@@ -6,6 +6,7 @@
 #include <functional>
 #include <utility>
 #include "progress.hpp"
+#include <cstdint>
 
 const size_t N = 500;
 const double J = 1.0;
@@ -19,7 +20,7 @@ auto rnd_unit = std::bind(unit_dist, std::ref(gen));
 std::uniform_int_distribution<int> index_dist(0, N - 1);
 auto rnd_index = std::bind(index_dist, std::ref(gen));
 
-using chain_t = std::vector<short>;
+using chain_t = std::vector<signed char>;
 
 
 static inline double energy(const chain_t& chain, int pos, double H)
@@ -34,7 +35,7 @@ std::pair<double, double> set_chain(chain_t& chain, double T, double H)
     double E_mean = 0;
     double M_mean = 0;
     double b = 1.0 / T;
-    size_t nrepeats = 1000000;
+    uint64_t nrepeats = 1000000;
     for (uint64_t i = 0; i <  nrepeats * N; ++i) {
         int pos = rnd_index();
 
@@ -118,7 +119,12 @@ operator<<(std::ostream& o, std::vector<double>& v)
 }
 
 std::ostream&
-operator<<(std::ostream& o, const std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>& t)
+operator<<(
+        std::ostream& o,
+        const std::tuple<std::vector<double>,
+        std::vector<double>,
+        std::vector<double>>& t
+        )
 {
     auto Ts = std::get<0>(t);
     auto Es = std::get<1>(t);
