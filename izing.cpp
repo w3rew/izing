@@ -35,7 +35,7 @@ std::pair<double, double> set_chain(chain_t& chain, double T, double H)
     double E_mean = 0;
     double M_mean = 0;
     double b = 1.0 / T;
-    uint64_t nrepeats = 10000;
+    uint64_t nrepeats = 1000;
     for (uint64_t i = 0; i <  nrepeats * N; ++i) {
         int pos = rnd_index();
 
@@ -93,7 +93,9 @@ get_E_M(double H)
 
     std::cout << "H = " << H << std::endl;
 
+#ifdef MULTITHREAD
 #pragma omp parallel for
+#endif
     for (int i = 0; i < nsteps; ++i) {
         chain_t chain(N, 1);
 #ifdef DEBUG
