@@ -46,8 +46,7 @@ std::pair<double, double> set_chain(chain_t& chain, double T, double H)
         double factor = std::exp(-2 * E * b);
         double p = factor / (factor + 1);
 
-        if (rnd_unit() > p)
-            chain[pos] = -chain[pos];
+        chain[pos] *= (1 - 2 * (rnd_unit() > p));
     }
 
     E_mean /= (nrepeats * N);
