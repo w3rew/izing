@@ -84,7 +84,7 @@ get_E_M(double H)
     int nsteps = 100;
     double dT = (Tmax - Tmin) / nsteps;
 
-#ifdef DEBUG
+#ifndef MULTITHREAD
     progressbar bar(nsteps);
 #endif
 
@@ -96,10 +96,10 @@ get_E_M(double H)
 #pragma omp parallel for
 #endif
     for (int i = 0; i < nsteps; ++i) {
-        chain_t chain(N, 1);
-#ifdef DEBUG
+#ifndef MULTITHREAD
         bar.update();
 #endif
+        chain_t chain(N, 1);
         double T = Tmin + i * dT;
 
         auto p = set_chain(chain, T, H);
