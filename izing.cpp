@@ -9,7 +9,7 @@
 #include <cstdint>
 
 const size_t N = 500;
-const double J = 1.0;
+const double J = 0.5;
 
 std::random_device rnd;
 std::mt19937 gen(rnd());
@@ -35,7 +35,7 @@ std::pair<double, double> set_chain(chain_t& chain, double T, double H)
     double E_mean = 0;
     double M_mean = 0;
     double b = 1.0 / T;
-    uint64_t nrepeats = 1000;
+    uint64_t nrepeats = 1000000;
     for (uint64_t i = 0; i <  nrepeats * N; ++i) {
         int pos = rnd_index();
 
@@ -79,7 +79,7 @@ double M(const chain_t& chain)
 std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 get_E_M(double H)
 {
-    double Tmin = 0.05;
+    double Tmin = 0.005;
     double Tmax = 10;
     int nsteps = 100;
     double dT = (Tmax - Tmin) / nsteps;
@@ -92,6 +92,8 @@ get_E_M(double H)
 
     std::cout << "H = " << H << std::endl;
 
+    double T = Tmax;
+
 #ifdef MULTITHREAD
 #pragma omp parallel for
 #endif
@@ -100,12 +102,13 @@ get_E_M(double H)
         bar.update();
 #endif
         chain_t chain(N, 1);
-        double T = Tmin + i * dT;
 
         auto p = set_chain(chain, T, H);
         Ts[i] = T;
         Es[i] = p.first;
         Ms[i] = p.second;
+
+        T /= 1.1;
     }
 
     return std::tuple{Ts, Es, Ms};
